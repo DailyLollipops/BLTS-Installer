@@ -283,10 +283,10 @@ class CreateMigrationWindow(tk.Toplevel):
         self.after(1000, create_migration_thread.start)
 
     def create_migrate(self):
-        try:
-            path = askdirectory()
-        except FileNotFoundError:
+        path = askdirectory()
+        if len(list(path)) <= 0:
             self.destroy()
+            return
         self.progress.set('Exporting data...')
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Documents', fr'{os.getcwd()}\BLTS\BLTS\Documents')
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Profile', fr'{os.getcwd()}\BLTS\BLTS\Profile')
