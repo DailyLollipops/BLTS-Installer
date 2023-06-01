@@ -283,6 +283,10 @@ class CreateMigrationWindow(tk.Toplevel):
         self.after(3000, create_migration_thread.start)
 
     def create_migrate(self):
+        try:
+            path = askdirectory()
+        except FileNotFoundError:
+            self.destroy()
         self.progress.set('Exporting data...')
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Documents', fr'{os.getcwd()}\BLTS\BLTS\Documents')
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Profile', fr'{os.getcwd()}\BLTS\BLTS\Profile')
@@ -290,9 +294,13 @@ class CreateMigrationWindow(tk.Toplevel):
         self.progress.set('Exporting database...')
         os.system(fr'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump -u root blts > BLTS\BLTS\blts.sql')        
         self.progress.set('Creating archive...')
-        shutil.make_archive('BLTS','zip', fr'{os.getcwd()}\BLTS')
+        current_time = datetime.datetime.now()
+        formatted_time = current_time.strftime('%Y-%m-%d-%H-%M-%S')
+        shutil.make_archive(f'BLTS-data-{formatted_time}','zip', fr'{os.getcwd()}\BLTS')
+        shutil.copy(fr'{os.getcwd()}\BLTS-data-{formatted_time}.zip', path)
         self.progress.set('Removing temp files...')
         shutil.rmtree(fr'{os.getcwd()}\BLTS')
+        os.remove(fr'{os.getcwd()}\BLTS-data-{formatted_time}.zip')
         messagebox.showinfo('Success', 'Migration data successfull created!')
         self.destroy()
 
