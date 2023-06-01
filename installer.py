@@ -280,7 +280,7 @@ class CreateMigrationWindow(tk.Toplevel):
         self.progressbar.place(x = 30, y = 40)
 
         create_migration_thread = Thread(target = self.create_migrate)
-        self.after(3000, create_migration_thread.start)
+        self.after(1000, create_migration_thread.start)
 
     def create_migrate(self):
         try:
