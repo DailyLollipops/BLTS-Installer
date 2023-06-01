@@ -48,7 +48,7 @@ class RootWindow(tk.Tk):
         self.create_migration_button.place(x = 160, y = 300)
         self.create_migration_tooltip = ToolTip(self)
 
-        self.migrate_button = tk.Button(self, text = 'Migrate Data', height = 2, width = 20, font = ('Calibri', 14), cursor = 'hand2')
+        self.migrate_button = tk.Button(self, text = 'Migrate Data', height = 2, width = 20, font = ('Calibri', 14), cursor = 'hand2', command = self.migrate)
         self.migrate_button.place(x = 160, y = 390)
         self.migrate_tooltip = ToolTip(self)
 
@@ -114,6 +114,9 @@ class RootWindow(tk.Tk):
 
     def create_migration(self):
         create_migration_window = CreateMigrationWindow(self)
+
+    def migrate(self):
+        migrate_window = MigrateWindow(self)
 
     def update(self):
         if os.path.exists(WORKING_DIRECTORY):
@@ -306,6 +309,45 @@ class CreateMigrationWindow(tk.Toplevel):
         os.remove(fr'{os.getcwd()}\BLTS-data-{formatted_time}.zip')
         messagebox.showinfo('Success', 'Migration data successfull created!')
         self.destroy()
+
+
+class MigrateWindow(tk.Toplevel):
+    def __init__(self, root:RootWindow):
+        tk.Toplevel.__init__(self, root)
+        self.root = root
+        self.geometry('400x100')
+        self.resizable(False, False)
+        self.grab_set()
+
+        self.progress = tk.StringVar()
+        self.progress.set('Initializing...')
+        self.progressbar_label = tk.Label(self, height = 3, padx = 1, justify = tk.LEFT, font = ('Calibri', 10), textvariable = self.progress)
+        self.progressbar_label.place(x = 30, y = 2.5)
+        self.progressbar = ttk.Progressbar(self, orient = 'horizontal', length = 340, mode = 'determinate')
+        self.progressbar.place(x = 30, y = 40)
+
+        migrate_thread = Thread(target = self.migrate)
+        self.after(1000, migrate_thread.start)
+
+    def migrate(self):
+        file = askopenfile(mode = 'r', filetypes = [('BLTS datafiles', '*.zip')])
+        if file is None:
+            self.destroy()
+            return
+        with ZipFile(file.name, 'r') as zip:
+            self.progress.set('Extracting BLTS data')
+            zip.extractall(fr'{os.getcwd()}/temp')
+        os.chdir(DIRECTORY)
+        os.system(fr'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump -u root blts < temp/BLTS/blts.sql')
+        shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Documents')
+        shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Reports')
+        shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Profile')
+        shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Documents', fr'{WORKING_DIRECTORY}/storage/app/public/Documents')
+        shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Reports', fr'{WORKING_DIRECTORY}/storage/app/public/Reports')
+        shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Profile', fr'{WORKING_DIRECTORY}/storage/app/public/Profile')
+        shutil.rmtree(fr'{os.getcwd()}\temp')
+        self.destroy()
+
 
 class ToolTip(tk.Toplevel):
     FADE_INC:float = .07
