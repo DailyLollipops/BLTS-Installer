@@ -292,6 +292,7 @@ class CreateMigrationWindow(tk.Toplevel):
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Profile', fr'{os.getcwd()}\BLTS\BLTS\Profile')
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Reports', fr'{os.getcwd()}\BLTS\BLTS\Reports')                                                                                
         self.progress.set('Exporting database...')
+        os.chdir(DIRECTORY)
         os.system(fr'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump -u root blts > BLTS\BLTS\blts.sql')        
         self.progress.set('Creating archive...')
         current_time = datetime.datetime.now()
