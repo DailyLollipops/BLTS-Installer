@@ -1,3 +1,12 @@
+'''
+    BLTS Installer and Migration Tool Source Code
+    To build using pyinstaller:
+        pyinstaller -F -w --add-data=assets/*;assets --icon=assets/icon.ico pysintaller --name="BLTS Installer and Migration Tool"
+        Additional args:
+            --onefile
+            --shell=False
+'''
+
 import tkinter as tk
 import tkinter.ttk as ttk
 import os
