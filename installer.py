@@ -30,6 +30,7 @@ class RootWindow(tk.Tk):
         tk.Tk.__init__(self)
         self.geometry('500x600')
         self.resizable(False, False)
+        self.iconbitmap(fr'{DIRECTORY}/assets/icon.ico')
 
         img = tk.PhotoImage(file=fr'{DIRECTORY}/assets/hero.png')
         hero = tk.Label(self, image = img)
@@ -142,6 +143,7 @@ class InstallWindow(tk.Toplevel):
         self.geometry('400x100')
         self.resizable(False, False)
         self.grab_set()
+        self.iconbitmap(fr'{DIRECTORY}/assets/icon.ico')
 
         self.progress = tk.StringVar()
         self.progress.set('Initializing...')
@@ -224,6 +226,7 @@ class UninstallWindow(tk.Toplevel):
         self.geometry('400x100')
         self.resizable(False, False)
         self.grab_set()
+        self.iconbitmap(fr'{DIRECTORY}/assets/icon.ico')
 
         self.progress = tk.StringVar()
         self.progress.set('Initializing...')
@@ -280,6 +283,7 @@ class CreateMigrationWindow(tk.Toplevel):
         self.geometry('400x100')
         self.resizable(False, False)
         self.grab_set()
+        self.iconbitmap(fr'{DIRECTORY}/assets/icon.ico')
 
         self.progress = tk.StringVar()
         self.progress.set('Initializing...')
@@ -322,6 +326,7 @@ class MigrateWindow(tk.Toplevel):
         self.geometry('400x100')
         self.resizable(False, False)
         self.grab_set()
+        self.iconbitmap(fr'{DIRECTORY}/assets/icon.ico')
 
         self.progress = tk.StringVar()
         self.progress.set('Initializing...')
