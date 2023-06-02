@@ -155,6 +155,7 @@ class InstallWindow(tk.Toplevel):
 
     def install(self):
         copy_success = False
+        installation_success = False
         self.progress.set('Checking if Laragon is installed...')
         if os.path.exists(LARAGON_PATH):
             self.progress.set('Laragon found and verified')
@@ -208,9 +209,12 @@ class InstallWindow(tk.Toplevel):
                 self.progress.set('Apache reloaded successfully')
             self.progressbar['value'] = 100
             self.progress.set('Installation Success!')
-            messagebox.showinfo('Success', 'Installation Success!')
+            installation_success = True
+            os.chdir(DIRECTORY)
         self.root.update()
         self.destroy()
+        if(installation_success):
+            messagebox.showinfo('Success', 'Installation Success!')
 
 
 class UninstallWindow(tk.Toplevel):
@@ -264,9 +268,9 @@ class UninstallWindow(tk.Toplevel):
         except subprocess.TimeoutExpired:
             self.progress.set('Apache reloaded successfully')
         self.progressbar['value'] = 100
-        messagebox.showinfo('Uninstall Success', 'BLTS successfully uninstalled!')
         self.root.update()
         self.destroy()
+        messagebox.showinfo('Uninstall Success', 'BLTS successfully uninstalled!')
 
 
 class CreateMigrationWindow(tk.Toplevel):
