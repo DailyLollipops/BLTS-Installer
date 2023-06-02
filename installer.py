@@ -15,8 +15,8 @@ from threading import Thread
 
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 ZIP_NAME = 'BLTS.zip'
-COMPRESSED_CODES = fr'{DIRECTORY}/{ZIP_NAME}'
-SHORTCUT = fr'{DIRECTORY}/BLTS.url'
+COMPRESSED_CODES = fr'{DIRECTORY}/assets/{ZIP_NAME}'
+SHORTCUT = fr'{DIRECTORY}/assets/BLTS.url'
 LARAGON_PATH = r'C:/laragon'
 LARAGON_PROJECT_PATH = fr'{LARAGON_PATH}/www'
 WORKING_DIRECTORY = fr'{LARAGON_PROJECT_PATH}/BLTS'
@@ -31,7 +31,7 @@ class RootWindow(tk.Tk):
         self.geometry('500x600')
         self.resizable(False, False)
 
-        img = tk.PhotoImage(file='hero.png')
+        img = tk.PhotoImage(file=fr'{DIRECTORY}/assets/hero.png')
         hero = tk.Label(self, image = img)
         hero.image = img
         hero.place(x = 90, y = 25)
