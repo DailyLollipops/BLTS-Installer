@@ -17,7 +17,7 @@ First install pyinstaller via
 
 then navigate to project directory and build from there 
 
-`pyinstaller --onefile --add-data=assets/*;assets --icon=assets/icon.ico pysintaller --name="BLTS Installer and Migration Tool"`
+`pyinstaller --onefile --add-data=assets/*;assets --icon=assets/icon.ico installer.py --name="BLTS Installer and Migration Tool"`
 
 then the output will be placed on the `/dist` folder
 
