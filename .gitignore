@@ -1,4 +1,5 @@
 build
 dist
+*.spec
 test.py
 tempCodeRunnerFile.py
