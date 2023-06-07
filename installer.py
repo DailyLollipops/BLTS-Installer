@@ -78,7 +78,7 @@ class RootWindow(tk.Tk):
             self.migrate_tooltip.bind(self.migrate_button, 'BLTS is not installed.\nPlease install first before using this feature')
 
 
-    def delete_existing_database(self):
+    def delete_existing_database(self, create_blank:bool = False):
         host = '127.0.0.1'
         user = 'root'
         password = ''
@@ -109,8 +109,11 @@ class RootWindow(tk.Tk):
 
         try:
             db_cursor = connection.cursor()
-            sql = "DROP DATABASE IF EXISTS blts;"
-            db_cursor.execute(sql)
+            delete_query = "DROP DATABASE IF EXISTS blts;"
+            db_cursor.execute(delete_query)
+            if(create_blank):
+                create_query =  "CREATE DATABASE blts;"
+                db_cursor.execute(create_query)
         except Exception as e:
             print("Exeception occured:{}".format(e))
         finally:
@@ -356,14 +359,16 @@ class MigrateWindow(tk.Toplevel):
             self.progress.set('Extracting BLTS data')
             zip.extractall(fr'{os.getcwd()}/temp')
         os.chdir(DIRECTORY)
-        os.system(fr'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump -u root blts < temp/BLTS/blts.sql')
+        self.root.delete_existing_database(create_blank = True)
         shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Documents')
         shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Reports')
         shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Profile')
+        os.system(fr'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysql -u root blts < temp/BLTS/blts.sql')
         shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Documents', fr'{WORKING_DIRECTORY}/storage/app/public/Documents')
         shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Reports', fr'{WORKING_DIRECTORY}/storage/app/public/Reports')
         shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Profile', fr'{WORKING_DIRECTORY}/storage/app/public/Profile')
         shutil.rmtree(fr'{os.getcwd()}\temp')
+        messagebox.showinfo('Success', 'Data successfully migrated')
         self.destroy()
 
 
