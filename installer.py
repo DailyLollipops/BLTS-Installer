@@ -126,10 +126,10 @@ class RootWindow(tk.Tk):
         unistall_window = UninstallWindow(self)
 
     def create_migration(self):
-        create_migration_window = CreateMigrationWindow(self)
+        create_migration_window = CreateMigrationWindow(self, hidden = True)
 
     def migrate(self):
-        migrate_window = MigrateWindow(self)
+        migrate_window = MigrateWindow(self, hidden = True)
 
     def update(self):
         if os.path.exists(WORKING_DIRECTORY):
@@ -289,14 +289,16 @@ class UninstallWindow(tk.Toplevel):
 
 
 class CreateMigrationWindow(tk.Toplevel):
-    def __init__(self, root:RootWindow):
+    def __init__(self, root:RootWindow, hidden:bool = False):
         tk.Toplevel.__init__(self, root)
+        if(hidden):
+            self.withdraw()
         self.root = root
         self.geometry('400x100')
         self.resizable(False, False)
         self.grab_set()
         self.iconbitmap(fr'{DIRECTORY}/assets/icon.ico')
-
+        
         self.progress = tk.StringVar()
         self.progress.set('Initializing...')
         self.progressbar_label = tk.Label(self, height = 3, padx = 1, justify = tk.LEFT, font = ('Calibri', 10), textvariable = self.progress)
@@ -332,8 +334,10 @@ class CreateMigrationWindow(tk.Toplevel):
 
 
 class MigrateWindow(tk.Toplevel):
-    def __init__(self, root:RootWindow):
+    def __init__(self, root:RootWindow, hidden:bool = False):
         tk.Toplevel.__init__(self, root)
+        if(hidden):
+            self.withdraw()
         self.root = root
         self.geometry('400x100')
         self.resizable(False, False)
