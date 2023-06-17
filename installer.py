@@ -126,10 +126,10 @@ class RootWindow(tk.Tk):
         unistall_window = UninstallWindow(self)
 
     def create_migration(self):
-        create_migration_window = CreateMigrationWindow(self, hidden = True)
+        create_migration_window = CreateMigrationWindow(self)
 
     def migrate(self):
-        migrate_window = MigrateWindow(self, hidden = True)
+        migrate_window = MigrateWindow(self)
 
     def update(self):
         if os.path.exists(WORKING_DIRECTORY):
@@ -298,6 +298,7 @@ class CreateMigrationWindow(tk.Toplevel):
         self.resizable(False, False)
         self.grab_set()
         self.iconbitmap(fr'{DIRECTORY}/assets/icon.ico')
+        self.attributes('-topmost', 'true')
         
         self.progress = tk.StringVar()
         self.progress.set('Initializing...')
@@ -318,21 +319,23 @@ class CreateMigrationWindow(tk.Toplevel):
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Documents', fr'{os.getcwd()}\BLTS\BLTS\Documents')
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Profile', fr'{os.getcwd()}\BLTS\BLTS\Profile')
         shutil.copytree(fr'{WORKING_DIRECTORY}/storage/app/public/Reports', fr'{os.getcwd()}\BLTS\BLTS\Reports')                                                                             
+        self.progressbar['value'] = 30
         self.progress.set('Exporting database...')
-        # os.chdir(DIRECTORY)
         os.system(fr'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump -u root blts > BLTS\BLTS\blts.sql')        
+        self.progressbar['value'] = 50
         self.progress.set('Creating archive...')
         current_time = datetime.datetime.now()
         formatted_time = current_time.strftime('%Y-%m-%d-%H-%M-%S')
         shutil.make_archive(fr'{os.getcwd()}\BLTS-data-{formatted_time}','zip', fr'{os.getcwd()}\BLTS')
-        print(path)
-        print(os.getcwd())
         if os.path.normpath(path) != os.path.normpath(os.getcwd()):
             shutil.copy(fr'{os.getcwd()}\BLTS-data-{formatted_time}.zip', path)
-            os.remove(fr'{os.getcwd()}\BLTS-data-{formatted_time}.zip') 
+            os.remove(fr'{os.getcwd()}\BLTS-data-{formatted_time}.zip')
+        self.progressbar['value'] = 90 
         self.progress.set('Removing temp files...')                                                            
         shutil.rmtree(fr'{os.getcwd()}\BLTS')
-        messagebox.showinfo('Success', 'Migration data successfull created!')
+        self.progressbar['value'] = 100 
+        self.progress.set('Data migration creation finished') 
+        messagebox.showinfo('Success', 'Migration data successfully created!')
         self.destroy()
 
 
@@ -346,6 +349,7 @@ class MigrateWindow(tk.Toplevel):
         self.resizable(False, False)
         self.grab_set()
         self.iconbitmap(fr'{DIRECTORY}/assets/icon.ico')
+        self.attributes('-topmost', 'true')
 
         self.progress = tk.StringVar()
         self.progress.set('Initializing...')
@@ -365,16 +369,24 @@ class MigrateWindow(tk.Toplevel):
         with ZipFile(file.name, 'r') as zip:
             self.progress.set('Extracting BLTS data')
             zip.extractall(fr'{os.getcwd()}/temp')
-        # os.chdir(DIRECTORY)
+        self.progress.set('Removing existing database...')
         self.root.delete_existing_database(create_blank = True)
+        self.progressbar['value'] = 10
+        self.progress.set('Removing existing files...')
         shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Documents')
         shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Reports')
         shutil.rmtree(fr'{WORKING_DIRECTORY}/storage/app/public/Profile')
+        self.progressbar['value'] = 40
+        self.progress.set('Dumping database...')
         os.system(fr'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysql -u root blts < temp/BLTS/blts.sql')
+        self.progressbar['value'] = 60
+        self.progress.set('Moving files...')
         shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Documents', fr'{WORKING_DIRECTORY}/storage/app/public/Documents')
         shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Reports', fr'{WORKING_DIRECTORY}/storage/app/public/Reports')
         shutil.copytree(fr'{os.getcwd()}\temp\BLTS\Profile', fr'{WORKING_DIRECTORY}/storage/app/public/Profile')
         shutil.rmtree(fr'{os.getcwd()}\temp')
+        self.progressbar['value'] = 100
+        self.progress.set('Data migration finished')
         messagebox.showinfo('Success', 'Data successfully migrated')
         self.destroy()
 
